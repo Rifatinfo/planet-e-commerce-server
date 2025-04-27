@@ -26,6 +26,7 @@ async function run() {
     await client.connect();
     
     const plantNetCollection = client.db("usersCollection").collection("users");
+    const addPlantNetCollection = client.db("planetCollection").collection("plantNet");
 
     app.post('/users/:email', async (req, res) => {
       const email = req.params.email;
@@ -37,6 +38,16 @@ async function run() {
       }
       const result = await plantNetCollection.insertOne({...user,  role: 'customer',  timestamp : Date.now()})
       res.send(result)
+    })
+
+    app.post('/plants', async (req, res) => {
+      const plant = req.body;
+      const result = await addPlantNetCollection.insertOne(plant);
+      res.send(result);
+    })
+    app.get('/plants', async (req, res) => {
+      const result = await addPlantNetCollection.find().toArray();
+      res.send(result);
     })
 
 
