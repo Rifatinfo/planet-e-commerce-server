@@ -24,6 +24,22 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+    
+    const plantNetCollection = client.db("usersCollection").collection("users");
+
+    app.post('/users/:email', async (req, res) => {
+      const email = req.params.email;
+      const query = {email}
+      const user = req.body;
+      const isExist = await plantNetCollection.findOne(query);
+      if(isExist){
+         return res.send(isExist);
+      }
+      const result = await plantNetCollection.insertOne({...user,  role: 'customer',  timestamp : Date.now()})
+      res.send(result)
+    })
+
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
