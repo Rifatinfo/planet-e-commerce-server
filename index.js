@@ -8,7 +8,7 @@ app.use(express.json());
 
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.USER_DB}:${process.env.PASS_DB}@cluster0.i1uhr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -47,6 +47,13 @@ async function run() {
     })
     app.get('/plants', async (req, res) => {
       const result = await addPlantNetCollection.find().toArray();
+      res.send(result);
+    })
+
+    app.get('/plant/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = {_id : new ObjectId(id)};
+      const result = await addPlantNetCollection.findOne(query);
       res.send(result);
     })
 
