@@ -27,6 +27,7 @@ async function run() {
     
     const plantNetCollection = client.db("usersCollection").collection("users");
     const addPlantNetCollection = client.db("planetCollection").collection("plantNet");
+    const plantNetOrderCollection = client.db("orderCollection").collection("order");
 
     app.post('/users/:email', async (req, res) => {
       const email = req.params.email;
@@ -55,6 +56,13 @@ async function run() {
       const query = {_id : new ObjectId(id)};
       const result = await addPlantNetCollection.findOne(query);
       res.send(result);
+    })
+
+    app.post('/order' , async (req, res) => {
+      const order = req.body;
+      console.log(order);
+      const result = await plantNetOrderCollection.insertOne(order);
+      res.send(result); 
     })
 
 
