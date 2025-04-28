@@ -77,7 +77,14 @@ async function run() {
       const result = await addPlantNetCollection.updateOne(filter, updatedDoc);
       res.send(result);
     })
-
+   
+    // order data get by specific user 
+    app.get('/customer-order/:email', async (req, res) =>{
+      const email = req.params.email;
+      const query = {'customer.email' : email};
+      const result = await plantNetOrderCollection.find(query).toArray();
+      res.send(result);
+    })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
