@@ -74,8 +74,8 @@ async function run() {
           quantity: -quantityUpdate
         }
       }
-      if(status === 'increase'){
-         updatedDoc = {
+      if (status === 'increase') {
+        updatedDoc = {
           $inc: {
             quantity: quantityUpdate
           }
@@ -94,16 +94,35 @@ async function run() {
       res.send(result);
     })
 
-    app.delete('/order/:id' , async  (req, res) => {
+    app.delete('/order/:id', async (req, res) => {
       const id = req.params.id;
-      const query = {_id : new ObjectId(id)}
+      const query = { _id: new ObjectId(id) }
       const order = await plantNetOrderCollection.findOne(query);
-     
-      if(order.status === 'Delivered'){
-         return res.status(409).send('Not Canceleation proces excute');
+
+      if (order.status === 'Delivered') {
+        return res.status(409).send('Not Canceleation proces excute');
       }
       const result = await plantNetOrderCollection.deleteOne(query);
       res.send(result);
+    })
+
+    app.patch('/users/:email', async (req, res) => {
+      const email = req.params.email;
+      const query = { email };
+      const user = await plantNetCollection.findOne(query);
+      if(!user || user?.status === 'Requested')
+        return res.status(400).send('You have already requested, wait for some time.');
+
+        const updatedDoc = {
+          $set : {
+            status : 'Requested'
+          }
+        }
+        const result = await plantNetCollection.updateOne(query, updatedDoc);
+        res.send(result);
+        console.log(result);
+        
+   
     })
 
     // Send a ping to confirm a successful connection
