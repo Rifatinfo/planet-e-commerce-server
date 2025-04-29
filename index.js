@@ -24,20 +24,20 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
-    
+
     const plantNetCollection = client.db("usersCollection").collection("users");
     const addPlantNetCollection = client.db("planetCollection").collection("plantNet");
     const plantNetOrderCollection = client.db("orderCollection").collection("order");
 
     app.post('/users/:email', async (req, res) => {
       const email = req.params.email;
-      const query = {email}
+      const query = { email }
       const user = req.body;
       const isExist = await plantNetCollection.findOne(query);
-      if(isExist){
-         return res.send(isExist);
+      if (isExist) {
+        return res.send(isExist);
       }
-      const result = await plantNetCollection.insertOne({...user,  role: 'customer',  timestamp : Date.now()})
+      const result = await plantNetCollection.insertOne({ ...user, role: 'customer', timestamp: Date.now() })
       res.send(result)
     })
 
@@ -53,36 +53,37 @@ async function run() {
 
     app.get('/plant/:id', async (req, res) => {
       const id = req.params.id;
-      const query = {_id : new ObjectId(id)};
+      const query = { _id: new ObjectId(id) };
       const result = await addPlantNetCollection.findOne(query);
       res.send(result);
     })
 
-    app.post('/order' , async (req, res) => {
+    app.post('/order', async (req, res) => {
       const order = req.body;
       console.log(order);
       const result = await plantNetOrderCollection.insertOne(order);
-      res.send(result); 
+      res.send(result);
     })
 
-    app.patch('/plants/quantity/:id', async (req, res) =>{
+    app.patch('/plants/quantity/:id', async (req, res) => {
       const id = req.params.id;
-      const {quantityUpdate} = req.body;
-      const filter = {_id : new ObjectId(id)};
+      const { quantityUpdate } = req.body;
+      const filter = { _id: new ObjectId(id) };
       let updatedDoc = {
-        $inc : {
-          quantity : -quantityUpdate
+        $inc: {
+          quantity: -quantityUpdate
         }
-      } 
+      }
       const result = await addPlantNetCollection.updateOne(filter, updatedDoc);
       res.send(result);
     })
-   
+
     // order data get by specific user 
-    app.get('/customer-order/:email', async (req, res) =>{
+    app.get('/customer-order/:email', async (req, res) => {
       const email = req.params.email;
-      const query = {'customer.email' : email};
-      const result = await plantNetOrderCollection.find(query).toArray();
+      const query = { 'customer.email': email };
+      const result = await plantNetOrderCollection.find(query
+      ).toArray();
       res.send(result);
     })
 
