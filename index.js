@@ -67,11 +67,18 @@ async function run() {
 
     app.patch('/plants/quantity/:id', async (req, res) => {
       const id = req.params.id;
-      const { quantityUpdate } = req.body;
+      const { quantityUpdate, status } = req.body;
       const filter = { _id: new ObjectId(id) };
       let updatedDoc = {
         $inc: {
           quantity: -quantityUpdate
+        }
+      }
+      if(status === 'increase'){
+         updatedDoc = {
+          $inc: {
+            quantity: quantityUpdate
+          }
         }
       }
       const result = await addPlantNetCollection.updateOne(filter, updatedDoc);
@@ -92,7 +99,7 @@ async function run() {
       const query = {_id : new ObjectId(id)}
       const order = await plantNetOrderCollection.findOne(query);
      
-      if(order.status === 'delivered'){
+      if(order.status === 'Delivered'){
          return res.status(409).send('Not Canceleation proces excute');
       }
       const result = await plantNetOrderCollection.deleteOne(query);
