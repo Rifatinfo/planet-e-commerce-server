@@ -87,6 +87,18 @@ async function run() {
       res.send(result);
     })
 
+    app.delete('/order/:id' , async  (req, res) => {
+      const id = req.params.id;
+      const query = {_id : new ObjectId(id)}
+      const order = await plantNetOrderCollection.findOne(query);
+     
+      if(order.status === 'delivered'){
+         return res.status(409).send('Not Canceleation proces excute');
+      }
+      const result = await plantNetOrderCollection.deleteOne(query);
+      res.send(result);
+    })
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
