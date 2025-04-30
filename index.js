@@ -125,6 +125,14 @@ async function run() {
    
     })
 
+    // user role route
+    app.get('/users/role/:email' , async (req, res) =>{
+      const email = req.params.email;
+      const id = {email}
+      const result = await plantNetCollection.findOne(id)
+      res.send(result);
+    }) 
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
